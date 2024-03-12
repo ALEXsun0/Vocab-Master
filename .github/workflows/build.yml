@@ -18,8 +18,12 @@ jobs:
       - name: Update deps
         run: sudo apt-get install -y gcc libgl1-mesa-dev xorg-dev
       - name: Build for Windows x64
+        env:
+          CGO_ENABLED: '1'
         run: GOOS=windows GOARCH=amd64 go build -ldflags "-H windowsgui -s -w" -o opt/windows_amd64/Vocab-Master.exe
       - name: Build for Windows x86
+        env:
+          CGO_ENABLED: '1'
         run: GOOS=windows GOARCH=i386 go build -ldflags "-H windowsgui -s -w" opt/windows_i386/Vocab-Master.exe
       - name: Setup script permissions
         run: chmod +x build_macos.sh
