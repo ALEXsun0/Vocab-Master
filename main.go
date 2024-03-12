@@ -69,7 +69,7 @@ func main() {
 	}
 
 	opts := &proxy.Options{
-		Addr:              "0.0.0.0:38848",
+		Addr:              "localhost:38848",
 		StreamLargeBodies: 1024 * 1024 * 5,
 		CaRootPath:        platform.CertDir,
 	}
