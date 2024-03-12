@@ -11,26 +11,45 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
           go-version: 1.20.2
+
       - name: Update deps
-        run: sudo apt-get install -y gcc libgl1-mesa-dev xorg-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc libgl1-mesa-dev xorg-dev
+          
+      - name: Install MinGW-w64
+        run: sudo apt-get install -y mingw-w64
+
       - name: Build for Windows x64
         env:
           CGO_ENABLED: '1'
-        run: GOOS=windows GOARCH=amd64 go build -ldflags "-H windowsgui -s -w" -o opt/windows_amd64/Vocab-Master.exe
+          CC: x86_64-w64-mingw32-gcc
+        run: |
+          GOOS=windows GOARCH=amd64 go build -ldflags "-H windowsgui -s -w" -o opt/windows_amd64/Vocab-Master.exe
+
       - name: Build for Windows x86
         env:
           CGO_ENABLED: '1'
-        run: GOOS=windows GOARCH=i386 go build -ldflags "-H windowsgui -s -w" opt/windows_i386/Vocab-Master.exe
+          CC: i686-w64-mingw32-gcc
+        run: |
+          GOOS=windows GOARCH=386 go build -ldflags "-H windowsgui -s -w" -o opt/windows_i386/Vocab-Master.exe
+
       - name: Setup script permissions
         run: chmod +x build_macos.sh
+
       - name: Build for macOS with Intel
-        run: GOOS=darwin GOARCH=amd64 ./build_macos.sh
+        run: |
+          GOOS=darwin GOARCH=amd64 ./build_macos.sh
+
       - name: Build for macOS with Apple Silicon
-        run: GOOS=darwin GOARCH=arm64 ./build_macos.sh
+        run: |
+          GOOS=darwin GOARCH=arm64 ./build_macos.sh
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
